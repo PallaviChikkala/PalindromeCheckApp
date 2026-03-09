@@ -1,39 +1,87 @@
-// File: UseCase11PalindromeCheckerApp.java
+// File: UseCase12PalindromeCheckerApp.java
 
-// PalindromeChecker class encapsulates the palindrome logic
-class PalindromeChecker {
+import java.util.Stack;
+import java.util.Deque;
+import java.util.ArrayDeque;
 
-    // Public method to expose palindrome checking
+// Step 1: Define the Strategy interface
+interface PalindromeStrategy {
+    boolean checkPalindrome(String input);
+}
+
+// Step 2: Implement Stack-based strategy
+class StackStrategy implements PalindromeStrategy {
+    @Override
     public boolean checkPalindrome(String input) {
-        // Normalize input: remove spaces and convert to lowercase
         String normalized = input.replaceAll("\\s+", "").toLowerCase();
+        Stack<Character> stack = new Stack<>();
 
-        int start = 0;
-        int end = normalized.length() - 1;
+        // Push all characters onto stack
+        for (char ch : normalized.toCharArray()) {
+            stack.push(ch);
+        }
 
-        while (start < end) {
-            if (normalized.charAt(start) != normalized.charAt(end)) {
+        // Compare by popping
+        for (char ch : normalized.toCharArray()) {
+            if (ch != stack.pop()) {
                 return false;
             }
-            start++;
-            end--;
         }
         return true;
     }
 }
 
-public class UseCase11PalindromeCheckerApp {
-    public static void main(String[] args) {
-        String input = "RaceCar"; // You can change this string for testing
+// Step 3: Implement Deque-based strategy
+class DequeStrategy implements PalindromeStrategy {
+    @Override
+    public boolean checkPalindrome(String input) {
+        String normalized = input.replaceAll("\\s+", "").toLowerCase();
+        Deque<Character> deque = new ArrayDeque<>();
 
-        // Create PalindromeChecker object
-        PalindromeChecker checker = new PalindromeChecker();
-
-        // Call the encapsulated method
-        if (checker.checkPalindrome(input)) {
-            System.out.println("The string \"" + input + "\" is a palindrome.");
-        } else {
-            System.out.println("The string \"" + input + "\" is NOT a palindrome.");
+        // Add all characters to deque
+        for (char ch : normalized.toCharArray()) {
+            deque.add(ch);
         }
+
+        // Compare front and back
+        while (deque.size() > 1) {
+            if (deque.pollFirst() != deque.pollLast()) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+// Step 4: Context class that uses a strategy
+class PalindromeCheckerContext {
+    private PalindromeStrategy strategy;
+
+    // Inject strategy at runtime
+    public PalindromeCheckerContext(PalindromeStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public boolean executeCheck(String input) {
+        return strategy.checkPalindrome(input);
+    }
+}
+
+public class PalindromeCheckerApp {
+    public static void main(String[] args) {
+        String input = "A man a plan a canal Panama"; // Change for testing
+
+        // Choose strategy dynamically
+        PalindromeCheckerContext context;
+
+        // Example: Use StackStrategy
+        context = new PalindromeCheckerContext(new StackStrategy());
+        System.out.println("Using StackStrategy:");
+        System.out.println("Is \"" + input + "\" a palindrome? " + context.executeCheck(input));
+
+        // Example: Use DequeStrategy
+        context = new PalindromeCheckerContext(new DequeStrategy());
+        System.out.println("\nUsing DequeStrategy:");
+        System.out.println("Is \"" + input + "\" a palindrome? " + context.executeCheck(input));
     }
 }
