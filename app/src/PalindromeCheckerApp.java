@@ -1,27 +1,37 @@
 import java.util.Stack;
-
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
 public class PalindromeCheckerApp {
     public static void main() {
-        // File: UseCase5PalindromeCheckerApp.java
-
                 String word = "madam";
 
-                // Create a stack of characters
+                // Create a queue and a stack
+                Queue<Character> queue = new LinkedList<>();
                 Stack<Character> stack = new Stack<>();
 
-                // Push each character into the stack
+                // Enqueue and push each character
                 for (int i = 0; i < word.length(); i++) {
-                    stack.push(word.charAt(i));
+                    char ch = word.charAt(i);
+                    queue.add(ch);   // enqueue
+                    stack.push(ch);  // push
                 }
 
-                // Pop characters to build the reversed string
-                String reversed = "";
-                while (!stack.isEmpty()) {
-                    reversed = reversed + stack.pop();
+                boolean isPalindrome = true;
+
+                // Compare dequeue vs pop
+                while (!queue.isEmpty() && !stack.isEmpty()) {
+                    char fromQueue = queue.remove(); // dequeue
+                    char fromStack = stack.pop();    // pop
+
+                    if (fromQueue != fromStack) {
+                        isPalindrome = false;
+                        break;
+                    }
                 }
 
-                // Compare original and reversed using equals()
-                if (word.equals(reversed)) {
+                // Print result
+                if (isPalindrome) {
                     System.out.println(word + " is a palindrome.");
                 } else {
                     System.out.println(word + " is not a palindrome.");
