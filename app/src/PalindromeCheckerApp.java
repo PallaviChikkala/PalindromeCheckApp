@@ -1,27 +1,36 @@
-// File: UseCase12PalindromeCheckerApp.java
+// File: UseCase13PalindromeCheckerApp.java
 
 import java.util.Stack;
 import java.util.Deque;
 import java.util.ArrayDeque;
 
-// Step 1: Define the Strategy interface
-interface PalindromeStrategy {
-    boolean checkPalindrome(String input);
-}
+public class PalindromeCheckerApp {
 
-// Step 2: Implement Stack-based strategy
-class StackStrategy implements PalindromeStrategy {
-    @Override
-    public boolean checkPalindrome(String input) {
+    // Approach 1: Simple two-pointer check
+    static boolean twoPointerCheck(String input) {
+        String normalized = input.replaceAll("\\s+", "").toLowerCase();
+        int start = 0;
+        int end = normalized.length() - 1;
+
+        while (start < end) {
+            if (normalized.charAt(start) != normalized.charAt(end)) {
+                return false;
+            }
+            start++;
+            end--;
+        }
+        return true;
+    }
+
+    // Approach 2: Stack-based check
+    static boolean stackCheck(String input) {
         String normalized = input.replaceAll("\\s+", "").toLowerCase();
         Stack<Character> stack = new Stack<>();
 
-        // Push all characters onto stack
         for (char ch : normalized.toCharArray()) {
             stack.push(ch);
         }
 
-        // Compare by popping
         for (char ch : normalized.toCharArray()) {
             if (ch != stack.pop()) {
                 return false;
@@ -29,21 +38,16 @@ class StackStrategy implements PalindromeStrategy {
         }
         return true;
     }
-}
 
-// Step 3: Implement Deque-based strategy
-class DequeStrategy implements PalindromeStrategy {
-    @Override
-    public boolean checkPalindrome(String input) {
+    // Approach 3: Deque-based check
+    static boolean dequeCheck(String input) {
         String normalized = input.replaceAll("\\s+", "").toLowerCase();
         Deque<Character> deque = new ArrayDeque<>();
 
-        // Add all characters to deque
         for (char ch : normalized.toCharArray()) {
             deque.add(ch);
         }
 
-        // Compare front and back
         while (deque.size() > 1) {
             if (deque.pollFirst() != deque.pollLast()) {
                 return false;
@@ -51,37 +55,32 @@ class DequeStrategy implements PalindromeStrategy {
         }
         return true;
     }
-}
 
-// Step 4: Context class that uses a strategy
-class PalindromeCheckerContext {
-    private PalindromeStrategy strategy;
-
-    // Inject strategy at runtime
-    public PalindromeCheckerContext(PalindromeStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public boolean executeCheck(String input) {
-        return strategy.checkPalindrome(input);
-    }
-}
-
-public class PalindromeCheckerApp {
     public static void main(String[] args) {
         String input = "A man a plan a canal Panama"; // Change for testing
 
-        // Choose strategy dynamically
-        PalindromeCheckerContext context;
+        // Measure performance of each approach
+        long start, end;
 
-        // Example: Use StackStrategy
-        context = new PalindromeCheckerContext(new StackStrategy());
-        System.out.println("Using StackStrategy:");
-        System.out.println("Is \"" + input + "\" a palindrome? " + context.executeCheck(input));
+        start = System.nanoTime();
+        boolean result1 = twoPointerCheck(input);
+        end = System.nanoTime();
+        long timeTwoPointer = end - start;
 
-        // Example: Use DequeStrategy
-        context = new PalindromeCheckerContext(new DequeStrategy());
-        System.out.println("\nUsing DequeStrategy:");
-        System.out.println("Is \"" + input + "\" a palindrome? " + context.executeCheck(input));
+        start = System.nanoTime();
+        boolean result2 = stackCheck(input);
+        end = System.nanoTime();
+        long timeStack = end - start;
+
+        start = System.nanoTime();
+        boolean result3 = dequeCheck(input);
+        end = System.nanoTime();
+        long timeDeque = end - start;
+
+        // Display results
+        System.out.println("Input: \"" + input + "\"\n");
+        System.out.println("Two-Pointer Check: " + result1 + " | Time: " + timeTwoPointer + " ns");
+        System.out.println("Stack Check:       " + result2 + " | Time: " + timeStack + " ns");
+        System.out.println("Deque Check:       " + result3 + " | Time: " + timeDeque + " ns");
     }
 }
