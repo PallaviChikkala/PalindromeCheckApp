@@ -1,20 +1,18 @@
-// File: UseCase10PalindromeCheckerApp.java
+// File: UseCase11PalindromeCheckerApp.java
 
-public class PalindromeCheckerApp {
+// PalindromeChecker class encapsulates the palindrome logic
+class PalindromeChecker {
 
-    // Method to normalize string: remove spaces and convert to lowercase
-    static String normalize(String str) {
-        // Remove all spaces using regex and convert to lowercase
-        return str.replaceAll("\\s+", "").toLowerCase();
-    }
+    // Public method to expose palindrome checking
+    public boolean checkPalindrome(String input) {
+        // Normalize input: remove spaces and convert to lowercase
+        String normalized = input.replaceAll("\\s+", "").toLowerCase();
 
-    // Method to check palindrome
-    static boolean isPalindrome(String str) {
         int start = 0;
-        int end = str.length() - 1;
+        int end = normalized.length() - 1;
 
         while (start < end) {
-            if (str.charAt(start) != str.charAt(end)) {
+            if (normalized.charAt(start) != normalized.charAt(end)) {
                 return false;
             }
             start++;
@@ -22,18 +20,20 @@ public class PalindromeCheckerApp {
         }
         return true;
     }
+}
 
+public class UseCase11PalindromeCheckerApp {
     public static void main(String[] args) {
-        String input = "A man a plan a canal Panama"; // You can change this string for testing
+        String input = "RaceCar"; // You can change this string for testing
 
-        // Normalize input
-        String normalized = normalize(input);
+        // Create PalindromeChecker object
+        PalindromeChecker checker = new PalindromeChecker();
 
-        // Check palindrome
-        if (isPalindrome(normalized)) {
-            System.out.println("The string \"" + input + "\" is a palindrome (ignoring case and spaces).");
+        // Call the encapsulated method
+        if (checker.checkPalindrome(input)) {
+            System.out.println("The string \"" + input + "\" is a palindrome.");
         } else {
-            System.out.println("The string \"" + input + "\" is NOT a palindrome (ignoring case and spaces).");
+            System.out.println("The string \"" + input + "\" is NOT a palindrome.");
         }
     }
 }
